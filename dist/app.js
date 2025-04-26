@@ -4,10 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
 require("dotenv/config");
 const mongoose_1 = __importDefault(require("mongoose"));
 const types_1 = require("./types/types");
+const todo_1 = __importDefault(require("./routes/todo"));
+const user_1 = __importDefault(require("./routes/user"));
 const app = (0, express_1.default)();
+app.use(body_parser_1.default.json());
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: `Server is running on port: ${types_1.env.PORT}`,
+    });
+});
+app.use("/todo", todo_1.default);
+app.use("/user", user_1.default);
 mongoose_1.default
     .connect(types_1.env.MONGODB_URI)
     .then((result) => {

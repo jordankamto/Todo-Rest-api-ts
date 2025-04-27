@@ -6,9 +6,13 @@ export const env: Env = {
   PORT: process.env.PORT || "",
 };
 
-interface CustomError {
+export interface CustomError {
   status: number;
   message: string;
   data: string;
 }
-export type { CustomError };
+
+export interface Todo {
+  text: string;
+  completed: boolean;
+}

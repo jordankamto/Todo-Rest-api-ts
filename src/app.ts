@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import { env, CustomError } from "./types/types";
 import todoRoutes from "./routes/todo";
-import userRoutes from "./routes/user";
 
 const app = express();
 
@@ -16,7 +15,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/todo", todoRoutes);
-app.use("/user", userRoutes);
 
 //Error handling middleware
 app.use(

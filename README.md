@@ -9,6 +9,7 @@ Elle offre les fonctionnalités suivantes :
 
 - **POST** `/todos` : Créer une nouvelle todo
 - **GET** `/todos` : Récupérer toutes les todos existantes
+- **GET** `/todos/:id` : Récupérer un todo spécifique
 - **PATCH** `/todos/:id` : Modifier le contenu texte d'une todo spécifique
 - **PUT** `/todos/:id` : Modifier le statut `completed` (boolean) d'une todo spécifique
 - **DELETE** `/todos/:id` : Supprimer une todo

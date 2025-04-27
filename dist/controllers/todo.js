@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTodo = exports.updateTodo = exports.addTodo = exports.getTodo = exports.getTodos = void 0;
+exports.deleteTodo = exports.patchTodo = exports.updateTodo = exports.addTodo = exports.getTodo = exports.getTodos = void 0;
 const todo_1 = __importDefault(require("../models/todo"));
 const express_validator_1 = require("express-validator");
 const getTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,6 +92,30 @@ exports.addTodo = addTodo;
 const updateTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            const error = {
+                message: "Validation failed",
+                status: 422,
+                data: errors.array()[0].msg,
+            };
+            throw error;
+        }
+        const { id } = req.params;
+        const { completed } = req.body;
+        const todo = yield todo_1.default.findById(id);
+        if (!todo) {
+            const error = {
+                message: "Todo not found",
+                status: 404,
+                data: "",
+            };
+            throw error;
+        }
+        todo.completed = completed;
+        const result = yield todo.save();
+        res
+            .status(200)
+            .json({ message: "Todo was updated successfully", data: result });
     }
     catch (error) {
         if (!error.status) {
@@ -101,6 +125,42 @@ const updateTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.updateTodo = updateTodo;
+const patchTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            const error = {
+                message: "Validation failed",
+                status: 422,
+                data: errors.array()[0].msg,
+            };
+            throw error;
+        }
+        const { id } = req.params;
+        const { text } = req.body;
+        const todo = yield todo_1.default.findById(id);
+        if (!todo) {
+            const error = {
+                message: "Todo not found",
+                status: 404,
+                data: "",
+            };
+            throw error;
+        }
+        todo.text = text;
+        const result = yield todo.save();
+        res
+            .status(200)
+            .json({ message: "Todo was patched successfully", data: result });
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
+});
+exports.patchTodo = patchTodo;
 const deleteTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
     }

@@ -91,8 +91,71 @@ export const updateTodo = async (
   res: Response,
   next: NextFunction
 ) => {
-    try {
-      const errors = validationResult(req);
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error: CustomError = {
+        message: "Validation failed",
+        status: 422,
+        data: errors.array()[0].msg,
+      };
+      throw error;
+    }
+    const { id } = req.params as params;
+    const { completed } = req.body as body;
+    const todo = await Todo.findById(id);
+    if (!todo) {
+      const error: CustomError = {
+        message: "Todo not found",
+        status: 404,
+        data: "",
+      };
+      throw error;
+    }
+    todo.completed = completed;
+    const result = await todo.save();
+    res
+      .status(200)
+      .json({ message: "Todo was updated successfully", data: result });
+  } catch (error) {
+    if (!(error as CustomError).status) {
+      (error as CustomError).status = 500;
+    }
+    next(error);
+  }
+};
+
+export const patchTodo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error: CustomError = {
+        message: "Validation failed",
+        status: 422,
+        data: errors.array()[0].msg,
+      };
+      throw error;
+    }
+    const { id } = req.params as params;
+    const { text } = req.body as body;
+    const todo = await Todo.findById(id);
+    if (!todo) {
+      const error: CustomError = {
+        message: "Todo not found",
+        status: 404,
+        data: "",
+      };
+      throw error;
+    }
+    todo.text = text;
+    const result = await todo.save();
+    res
+      .status(200)
+      .json({ message: "Todo was patched successfully", data: result });
   } catch (error) {
     if (!(error as CustomError).status) {
       (error as CustomError).status = 500;

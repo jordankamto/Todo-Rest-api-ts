@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
-require("dotenv/config");
 const mongoose_1 = __importDefault(require("mongoose"));
 const types_1 = require("./types/types");
 const todo_1 = __importDefault(require("./routes/todo"));
@@ -19,6 +18,19 @@ app.get("/", (req, res) => {
 });
 app.use("/todo", todo_1.default);
 app.use("/user", user_1.default);
+//Error handling middleware
+app.use((error, req, res, next) => {
+    console.log(error);
+    const status = error.status;
+    const message = error.message;
+    const data = error.data;
+    res.status(status).json({ message: message, data: data });
+});
+// 404 error handling middleware
+app.use((req, res) => {
+    res.status(404).json({ message: "Route not found" });
+});
+// Connect to MongoDB and start the server
 mongoose_1.default
     .connect(types_1.env.MONGODB_URI)
     .then((result) => {

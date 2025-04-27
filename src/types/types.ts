@@ -5,3 +5,10 @@ export const env: Env = {
   MONGODB_URI: process.env.MONGODB_URI || "",
   PORT: process.env.PORT || "",
 };
+
+interface CustomError {
+  status: number;
+  message: string;
+  data: string;
+}
+export type { CustomError };

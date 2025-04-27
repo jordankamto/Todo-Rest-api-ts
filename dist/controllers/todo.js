@@ -163,6 +163,21 @@ const patchTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function
 exports.patchTodo = patchTodo;
 const deleteTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { id } = req.params;
+        const todo = yield todo_1.default.findById(id);
+        if (!todo) {
+            const error = {
+                message: "Todo not found",
+                status: 404,
+                data: "",
+            };
+            throw error;
+        }
+        const result = yield todo_1.default.findByIdAndDelete(id);
+        res.status(200).json({
+            message: "Todo was deleted successfully",
+            data: result,
+        });
     }
     catch (error) {
         if (!error.status) {

@@ -170,6 +170,21 @@ export const deleteTodo = async (
   next: NextFunction
 ) => {
   try {
+    const { id } = req.params as params;
+    const todo = await Todo.findById(id);
+    if (!todo) {
+      const error: CustomError = {
+        message: "Todo not found",
+        status: 404,
+        data: "",
+      };
+      throw error;
+    }
+    const result = await Todo.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Todo was deleted successfully",
+      data: result,
+    });
   } catch (error) {
     if (!(error as CustomError).status) {
       (error as CustomError).status = 500;

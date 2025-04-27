@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTodo = exports.updateTodo = exports.addTodo = exports.getTodo = exports.getTodos = void 0;
 const todo_1 = __importDefault(require("../models/todo"));
+const express_validator_1 = require("express-validator");
 const getTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const todos = yield todo_1.default.find();
@@ -38,18 +39,76 @@ const getTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getTodos = getTodos;
 const getTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({ message: "Get a todo by id" });
+    try {
+        const { id } = req.params;
+        const todo = yield todo_1.default.findById(id);
+        if (!todo) {
+            const error = {
+                message: "Todo not found",
+                status: 404,
+                data: "",
+            };
+            throw error;
+        }
+        res
+            .status(200)
+            .json({ message: "Todo was fetched successfully", data: todo });
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
 });
 exports.getTodo = getTodo;
 const addTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({ message: "Add a todo" });
+    try {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            const error = {
+                message: "Validation failed",
+                status: 422,
+                data: errors.array()[0].msg,
+            };
+            throw error;
+        }
+        const { text } = req.body;
+        const todo = new todo_1.default({ text });
+        const result = yield todo.save();
+        res.status(201).json({
+            message: "Todo was created successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
 });
 exports.addTodo = addTodo;
 const updateTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({ message: "Update a todo by id" });
+    try {
+        const errors = (0, express_validator_1.validationResult)(req);
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
 });
 exports.updateTodo = updateTodo;
 const deleteTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({ message: "Delete a todo by id" });
+    try {
+    }
+    catch (error) {
+        if (!error.status) {
+            error.status = 500;
+        }
+        next(error);
+    }
 });
 exports.deleteTodo = deleteTodo;

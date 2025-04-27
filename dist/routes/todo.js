@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const express_validator_1 = require("express-validator");
 const todo_1 = require("../controllers/todo");
 const router = (0, express_1.Router)();
 router.get("/", todo_1.getTodos);
 router.get("/:id", todo_1.getTodo);
-router.post("/", todo_1.addTodo);
-router.put("/:id", todo_1.updateTodo);
+router.post("/", [(0, express_validator_1.body)("text").trim().isLength({ min: 1 }).withMessage("No text was found")], todo_1.addTodo);
+router.put("/:id", [(0, express_validator_1.body)("text").trim().isLength({ min: 1 }).withMessage("No text was found")], todo_1.updateTodo);
 router.delete("/:id", todo_1.deleteTodo);
 exports.default = router;

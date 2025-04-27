@@ -16,3 +16,6 @@ export interface Todo {
   text: string;
   completed: boolean;
 }
+
+export type params = { id: string };
+export type body = { text: string; completed: boolean };
